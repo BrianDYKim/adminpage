@@ -34,4 +34,11 @@ class CategoryRepositoryTest {
 
         category.ifPresent(System.out::println);
     }
+
+    @Test
+    public void test() {
+        categoryRepository.findById(1L).ifPresent(category -> {
+            categoryRepository.delete(category);
+        });
+    }
 }
