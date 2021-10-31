@@ -6,7 +6,6 @@ import com.fastcampus.adminpage.model.network.request.UserApiRequest;
 import com.fastcampus.adminpage.model.network.response.UserApiResponse;
 import com.fastcampus.adminpage.service.UserApiLogicService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,19 +27,22 @@ public class UserApiController implements CrudInterface<UserApiRequest, UserApiR
 
     @Override
     @GetMapping("{id}") // read의 경우 id를 PathVariable의 형식으로 받아와야함. api/user/{id}
-    public Header read(@PathVariable Long id) {
-        return null;
+    public Header<UserApiResponse> read(@PathVariable Long id) {
+        log.info("read id : {}", id);
+
+        return userApiLogicService.read(id);
     }
 
     @Override
     @PutMapping("") // api/user
     public Header<UserApiResponse> update(@RequestBody Header<UserApiRequest> userApiRequest) {
-        return null;
+        return userApiLogicService.update(userApiRequest);
     }
 
     @Override
     @DeleteMapping("{id}") // api/user/{id}
     public Header delete(@PathVariable Long id) {
-        return null;
+        log.info("delete id : {}", id);
+        return userApiLogicService.delete(id);
     }
 }

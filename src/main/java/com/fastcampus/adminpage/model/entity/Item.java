@@ -1,6 +1,8 @@
 package com.fastcampus.adminpage.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -8,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @ToString(exclude = {"orderDetailList", "partner"})
+@Accessors(chain = true)
 @EntityListeners(AuditingEntityListener.class)
 public class Item {
 
@@ -32,12 +36,15 @@ public class Item {
 
     private String content;
 
-    private Integer price;
+    private BigDecimal price;
 
+    @JsonProperty("brand_name")
     private String brandName;
 
+    @JsonProperty("registered_at")
     private LocalDateTime registeredAt;
 
+    @JsonProperty("unregistered_at")
     private LocalDateTime unregisteredAt;
 
     @CreatedDate

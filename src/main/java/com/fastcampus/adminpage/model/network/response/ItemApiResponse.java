@@ -1,4 +1,4 @@
-package com.fastcampus.adminpage.model.network.request;
+package com.fastcampus.adminpage.model.network.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -6,31 +6,36 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserApiRequest {
-    // createdAt 등등은 통신 과정에 사용하지 않기 때문에 포함시키지 않음.
+public class ItemApiResponse {
 
     private Long id;
 
-    private String account;
-
-    private String password;
-
     private String status;
 
-    private String email;
+    private String name;
 
-    @JsonProperty("phone_number")
-    private String phoneNumber;
+    private String title;
+
+    private String content;
+
+    private BigDecimal price;
+
+    @JsonProperty("brand_name")
+    private String brandName;
 
     @JsonProperty("registered_at")
     private LocalDateTime registeredAt;
 
     @JsonProperty("unregistered_at")
     private LocalDateTime unregisteredAt;
+
+    @JsonProperty("partner_id")
+    private Long partnerId;
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 // Service 로직을 담당
 @Service
@@ -44,17 +45,50 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
 
     @Override
     public Header<UserApiResponse> read(Long id) {
-        return null;
+
+        // 1. userRepository를 이용해 데이터 가져오기
+        // 2. response return
+        return userRepository.findById(id)
+                .map(user -> response(user))
+                .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
     @Override
     public Header<UserApiResponse> update(Header<UserApiRequest> request) {
-        return null;
+        // 1. data
+        UserApiRequest requestData = request.getData();
+
+        // 2. id -> user 데이터 찾기
+        Optional<User> optionalUser = userRepository.findById(requestData.getId());
+
+        return optionalUser.map(user -> {
+            user.setAccount(requestData.getAccount())
+                    .setPassword(requestData.getPassword())
+                    .setStatus(requestData.getStatus())
+                    .setPhoneNumber(requestData.getPhoneNumber())
+                    .setEmail(requestData.getEmail())
+                    .setRegisteredAt(requestData.getRegisteredAt())
+                    .setUnregisteredAt(requestData.getUnregisteredAt());
+
+            return user;
+        })
+                .map(user -> userRepository.save(user))
+                .map(user -> response(user))
+                .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
     @Override
     public Header delete(Long id) {
-        return null;
+        // 1. id -> repository -> user
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        // 2. repository -> delete
+        return optionalUser.map(user -> {
+            userRepository.delete(user);
+
+            return Header.OK();
+        })
+                .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
     // Response 부분 분리 -> 네 메소드에서 동시에 사용하는 기능이기 때문
