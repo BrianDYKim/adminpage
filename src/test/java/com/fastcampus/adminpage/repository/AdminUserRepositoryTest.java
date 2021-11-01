@@ -1,6 +1,8 @@
 package com.fastcampus.adminpage.repository;
 
 import com.fastcampus.adminpage.model.entity.AdminUser;
+import com.fastcampus.adminpage.model.enumClass.adminUser.AdminUserRole;
+import com.fastcampus.adminpage.model.enumClass.adminUser.AdminUserStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,8 +19,8 @@ class AdminUserRepositoryTest {
         AdminUser adminUser = AdminUser.builder()
                 .account("AdminUser02")
                 .password("AdminUser02")
-                .status("REGISTERED")
-                .role("SUPER")
+                .status(AdminUserStatus.REGISTERED)
+                .role(AdminUserRole.TOTAL_ADMIN)
                 .build();
 
         AdminUser newAdminUser = adminUserRepository.save(adminUser);
