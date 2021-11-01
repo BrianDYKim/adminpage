@@ -1,4 +1,4 @@
-package com.fastcampus.adminpage.model.network.request;
+package com.fastcampus.adminpage.model.network.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderDetailApiRequest {
+public class OrderDetailApiResponse {
 
     private Long id;
 
