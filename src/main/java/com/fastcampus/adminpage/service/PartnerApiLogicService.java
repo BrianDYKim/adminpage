@@ -57,12 +57,49 @@ public class PartnerApiLogicService implements CrudInterface<PartnerApiRequest, 
 
     @Override
     public Header<PartnerApiResponse> update(Header<PartnerApiRequest> request) {
-        return null;
+        /*
+        1. request body 가져오기
+        2. body에서 id를 가져와서 db에서 데이터 추출
+        3. 데이터 수정
+        4. return response
+         */
+
+        PartnerApiRequest requestBody = request.getData();
+
+        return partnerRepository.findById(requestBody.getId())
+                .map(entityPartner -> {
+                    entityPartner.setName(requestBody.getName())
+                            .setStatus(requestBody.getStatus())
+                            .setAddress(requestBody.getAddress())
+                            .setCallCenter(requestBody.getCallCenter())
+                            .setPartnerNumber(requestBody.getPartnerNumber())
+                            .setBusinessNumber(requestBody.getBusinessNumber())
+                            .setCeoName(requestBody.getCeoName())
+                            .setRegisteredAt(requestBody.getRegisteredAt())
+                            .setUnregisteredAt(requestBody.getUnregisteredAt())
+                            .setCategory(categoryRepository.getById(requestBody.getCategoryId()));
+
+                    return entityPartner;
+                })
+                .map(partner -> partnerRepository.save(partner))
+                .map(partner -> response(partner))
+                .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
     @Override
     public Header delete(Long id) {
-        return null;
+        /*
+        1. id를 통해 db에서 데이터 불러오기
+        2. 데이터 삭제
+        3. return response with no data
+         */
+
+        return partnerRepository.findById(id)
+                .map(partner -> {
+                    partnerRepository.delete(partner);
+                    return Header.OK();
+                })
+                .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
     private Header<PartnerApiResponse> response(Partner partner) {
