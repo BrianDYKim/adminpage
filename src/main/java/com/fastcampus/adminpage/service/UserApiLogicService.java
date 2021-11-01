@@ -2,6 +2,7 @@ package com.fastcampus.adminpage.service;
 
 import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.User;
+import com.fastcampus.adminpage.model.enumClass.UserStatus;
 import com.fastcampus.adminpage.model.network.Header;
 import com.fastcampus.adminpage.model.network.request.UserApiRequest;
 import com.fastcampus.adminpage.model.network.response.UserApiResponse;
@@ -32,7 +33,7 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
         User user = User.builder()
                 .account(requestData.getAccount())
                 .password(requestData.getPassword())
-                .status("REGISTERED")
+                .status(UserStatus.REGISTERED)
                 .phoneNumber(requestData.getPhoneNumber())
                 .email(requestData.getEmail())
                 .registeredAt(LocalDateTime.now())

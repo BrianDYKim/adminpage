@@ -1,11 +1,15 @@
 package com.fastcampus.adminpage.model.network.request;
 
+import com.fastcampus.adminpage.model.enumClass.orderGroup.OrderGroupStatus;
+import com.fastcampus.adminpage.model.enumClass.orderGroup.OrderType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -17,10 +21,12 @@ public class OrderGroupApiRequest {
 
     private Long id;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderGroupStatus status;
 
     @JsonProperty("order_type")
-    private String orderType; // 묶음 배송? 개별 배송?
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType; // 묶음 배송? 개별 배송?
 
     @JsonProperty("rev_address")
     private String revAddress;

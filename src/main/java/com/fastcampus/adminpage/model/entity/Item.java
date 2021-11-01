@@ -1,5 +1,6 @@
 package com.fastcampus.adminpage.model.entity;
 
+import com.fastcampus.adminpage.model.enumClass.ItemStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -28,7 +29,8 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ItemStatus status; // 등록, 해지, 검수중
 
     private String name;
 

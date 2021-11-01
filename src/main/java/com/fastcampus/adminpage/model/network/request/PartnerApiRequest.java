@@ -1,11 +1,14 @@
 package com.fastcampus.adminpage.model.network.request;
 
+import com.fastcampus.adminpage.model.enumClass.PartnerStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +21,8 @@ public class PartnerApiRequest {
 
     private String name;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PartnerStatus status;
 
     private String address;
 

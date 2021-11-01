@@ -1,5 +1,7 @@
 package com.fastcampus.adminpage.model.entity;
 
+import com.fastcampus.adminpage.model.enumClass.adminUser.AdminUserRole;
+import com.fastcampus.adminpage.model.enumClass.adminUser.AdminUserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,9 +33,11 @@ public class AdminUser {
 
     private String password;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AdminUserStatus status;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private AdminUserRole role;
 
     private LocalDateTime lastLoginedAt;
 

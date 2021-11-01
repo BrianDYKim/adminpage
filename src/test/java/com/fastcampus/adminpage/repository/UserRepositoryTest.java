@@ -1,6 +1,7 @@
 package com.fastcampus.adminpage.repository;
 
 import com.fastcampus.adminpage.model.entity.User;
+import com.fastcampus.adminpage.model.enumClass.UserStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +22,7 @@ class UserRepositoryTest {
         User user = User.builder()
                 .account("Test02")
                 .password("Test02")
-                .status("REGISTERED")
+                .status(UserStatus.REGISTERED)
                 .email("Test02@naver.com")
                 .phoneNumber("010-0000-0002")
                 .registeredAt(LocalDateTime.now())
