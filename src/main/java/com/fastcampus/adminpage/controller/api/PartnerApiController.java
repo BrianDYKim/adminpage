@@ -1,45 +1,25 @@
 package com.fastcampus.adminpage.controller.api;
 
-import com.fastcampus.adminpage.ifs.CrudInterface;
-import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.controller.abstracts.AbstractCrudController;
 import com.fastcampus.adminpage.model.network.request.PartnerApiRequest;
 import com.fastcampus.adminpage.model.network.response.PartnerApiResponse;
 import com.fastcampus.adminpage.service.PartnerApiLogicService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/api/partner")
 @RequiredArgsConstructor
-@Slf4j
-public class PartnerApiController implements CrudInterface<PartnerApiRequest, PartnerApiResponse> {
+public class PartnerApiController extends AbstractCrudController<PartnerApiRequest, PartnerApiResponse> {
 
     private final PartnerApiLogicService partnerApiLogicService;
 
-    @Override
-    @PostMapping("")
-    public Header<PartnerApiResponse> create(@RequestBody Header<PartnerApiRequest> request) {
-        return partnerApiLogicService.create(request);
+    @PostConstruct
+    public void init() {
+        this.baseService = partnerApiLogicService;
     }
 
-    @Override
-    @GetMapping("{id}")
-    public Header<PartnerApiResponse> read(@PathVariable Long id) {
-        log.info("read id : {}", id);
-        return partnerApiLogicService.read(id);
-    }
-
-    @Override
-    @PutMapping("")
-    public Header<PartnerApiResponse> update(@RequestBody Header<PartnerApiRequest> request) {
-        return partnerApiLogicService.update(request);
-    }
-
-    @Override
-    @DeleteMapping("{id}")
-    public Header delete(@PathVariable Long id) {
-        log.info("delete id : {}", id);
-        return partnerApiLogicService.delete(id);
-    }
 }

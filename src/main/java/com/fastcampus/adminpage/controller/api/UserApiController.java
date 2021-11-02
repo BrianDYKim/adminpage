@@ -1,48 +1,26 @@
 package com.fastcampus.adminpage.controller.api;
 
-import com.fastcampus.adminpage.ifs.CrudInterface;
-import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.controller.abstracts.AbstractCrudController;
 import com.fastcampus.adminpage.model.network.request.UserApiRequest;
 import com.fastcampus.adminpage.model.network.response.UserApiResponse;
 import com.fastcampus.adminpage.service.UserApiLogicService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@Slf4j
-public class UserApiController implements CrudInterface<UserApiRequest, UserApiResponse> {
+public class UserApiController extends AbstractCrudController<UserApiRequest, UserApiResponse> {
 
     // Controller와 Service 연결
     private final UserApiLogicService userApiLogicService;
 
-    @Override
-    @PostMapping("") // api/user
-    public Header<UserApiResponse> create(@RequestBody Header<UserApiRequest> userApiRequest) {
-        log.info("{}", userApiRequest);
-        return userApiLogicService.create(userApiRequest);
-    }
-
-    @Override
-    @GetMapping("{id}") // read의 경우 id를 PathVariable의 형식으로 받아와야함. api/user/{id}
-    public Header<UserApiResponse> read(@PathVariable Long id) {
-        log.info("read id : {}", id);
-
-        return userApiLogicService.read(id);
-    }
-
-    @Override
-    @PutMapping("") // api/user
-    public Header<UserApiResponse> update(@RequestBody Header<UserApiRequest> userApiRequest) {
-        return userApiLogicService.update(userApiRequest);
-    }
-
-    @Override
-    @DeleteMapping("{id}") // api/user/{id}
-    public Header delete(@PathVariable Long id) {
-        log.info("delete id : {}", id);
-        return userApiLogicService.delete(id);
+    // Service의 의존성을 주입을 받은 다음에 baseService에 service를 연결해야만 정상 동작한다!
+    @PostConstruct
+    public void init() {
+        this.baseService = userApiLogicService;
     }
 }
