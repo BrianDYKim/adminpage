@@ -12,6 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -51,4 +52,7 @@ public class OrderGroupApiResponse {
 
     @JsonProperty("user_id")
     private Long userId;
+
+    @JsonProperty("item_api_response_list")
+    private List<ItemApiResponse> itemApiResponseList;
 }

@@ -139,7 +139,7 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
         return Header.OK(body);
     }
 
-    private ItemApiResponse responseData(Item item) {
+    public ItemApiResponse responseData(Item item) {
         ItemApiResponse body = ItemApiResponse.builder()
                 .id(item.getId())
                 .status(item.getStatus())

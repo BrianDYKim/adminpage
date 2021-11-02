@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -36,4 +37,7 @@ public class UserApiResponse {
 
     @JsonProperty("unregistered_at")
     private LocalDateTime unregisteredAt;
+
+    @JsonProperty("order_group_api_response_list")
+    private List<OrderGroupApiResponse> orderGroupApiResponseList;
 }

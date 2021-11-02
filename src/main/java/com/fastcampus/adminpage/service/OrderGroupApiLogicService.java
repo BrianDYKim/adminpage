@@ -131,7 +131,7 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
         return Header.OK(body);
     }
 
-    private OrderGroupApiResponse responseData(OrderGroup orderGroup) {
+    public OrderGroupApiResponse responseData(OrderGroup orderGroup) {
         OrderGroupApiResponse body = OrderGroupApiResponse.builder()
                 .id(orderGroup.getId())
                 .status(orderGroup.getStatus())
