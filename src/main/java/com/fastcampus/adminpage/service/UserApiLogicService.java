@@ -4,14 +4,19 @@ import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.User;
 import com.fastcampus.adminpage.model.enumClass.UserStatus;
 import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.model.network.Pagination;
 import com.fastcampus.adminpage.model.network.request.UserApiRequest;
 import com.fastcampus.adminpage.model.network.response.UserApiResponse;
 import com.fastcampus.adminpage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // Service 로직을 담당
 @Service
@@ -88,8 +93,25 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
             userRepository.delete(user);
 
             return Header.OK();
-        })
-                .orElseGet(() -> Header.ERROR("데이터 없음"));
+        }).orElseGet(() -> Header.ERROR("데이터 없음"));
+    }
+
+    @Override
+    public Header<List<UserApiResponse>> search(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable); // 페이지에 유저를 담기
+
+        List<UserApiResponse> userApiResponseList = users.stream()
+                .map(user -> responseData(user))
+                .collect(Collectors.toList());
+
+        Pagination pagination = Pagination.builder()
+                .totalPages(users.getTotalPages())
+                .totalElements(users.getTotalElements())
+                .currentPage(users.getNumber())
+                .currentElements(users.getNumberOfElements())
+                .build();
+
+        return Header.OK(userApiResponseList, pagination);
     }
 
     // Response 부분 분리 -> 네 메소드에서 동시에 사용하는 기능이기 때문
@@ -107,5 +129,22 @@ public class UserApiLogicService implements CrudInterface<UserApiRequest, UserAp
 
         // Header + data return
         return Header.OK(userApiResponse);
+    }
+
+    // body만을 반환하는 메소드
+    private UserApiResponse responseData(User user) {
+        UserApiResponse userApiResponse = UserApiResponse.builder()
+                .id(user.getId())
+                .account(user.getAccount())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .status(user.getStatus())
+                .registeredAt(user.getRegisteredAt())
+                .unregisteredAt(user.getUnregisteredAt())
+                .build();
+
+        // data return
+        return userApiResponse;
     }
 }

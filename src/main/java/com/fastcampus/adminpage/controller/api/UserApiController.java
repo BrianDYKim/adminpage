@@ -5,6 +5,7 @@ import com.fastcampus.adminpage.model.network.request.UserApiRequest;
 import com.fastcampus.adminpage.model.network.response.UserApiResponse;
 import com.fastcampus.adminpage.service.UserApiLogicService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +14,7 @@ import javax.annotation.PostConstruct;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+@Slf4j
 public class UserApiController extends AbstractCrudController<UserApiRequest, UserApiResponse> {
 
     // Controller와 Service 연결
@@ -23,4 +25,5 @@ public class UserApiController extends AbstractCrudController<UserApiRequest, Us
     public void init() {
         this.baseService = userApiLogicService;
     }
+
 }

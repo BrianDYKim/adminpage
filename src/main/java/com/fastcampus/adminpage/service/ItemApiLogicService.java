@@ -3,16 +3,21 @@ package com.fastcampus.adminpage.service;
 import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.Item;
 import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.model.network.Pagination;
 import com.fastcampus.adminpage.model.network.request.ItemApiRequest;
 import com.fastcampus.adminpage.model.network.response.ItemApiResponse;
 import com.fastcampus.adminpage.repository.ItemRepository;
 import com.fastcampus.adminpage.repository.PartnerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -96,6 +101,27 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
         }).orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
+    @Override
+    public Header<List<ItemApiResponse>> search(Pageable pageable) {
+
+        Page<Item> items = itemRepository.findAll(pageable); // item을 모두 가져오기
+
+        // 아이템 response를 리스트화
+        List<ItemApiResponse> itemList = items.stream()
+                .map(item -> responseData(item))
+                .collect(Collectors.toList());
+
+        // 페이지 정보 포장
+        Pagination pagination = Pagination.builder()
+                .totalPages(items.getTotalPages())
+                .totalElements(items.getTotalElements())
+                .currentPage(items.getNumber())
+                .currentElements(items.getNumberOfElements())
+                .build();
+
+        return Header.OK(itemList, pagination);
+    }
+
     private Header<ItemApiResponse> response(Item item) {
         ItemApiResponse body = ItemApiResponse.builder()
                 .id(item.getId())
@@ -111,5 +137,22 @@ public class ItemApiLogicService implements CrudInterface<ItemApiRequest, ItemAp
                 .build();
 
         return Header.OK(body);
+    }
+
+    private ItemApiResponse responseData(Item item) {
+        ItemApiResponse body = ItemApiResponse.builder()
+                .id(item.getId())
+                .status(item.getStatus())
+                .name(item.getName())
+                .title(item.getTitle())
+                .content(item.getContent())
+                .price(item.getPrice())
+                .brandName(item.getBrandName())
+                .registeredAt(item.getRegisteredAt())
+                .unregisteredAt(item.getUnregisteredAt())
+                .partnerId(item.getPartner().getId())
+                .build();
+
+        return body;
     }
 }

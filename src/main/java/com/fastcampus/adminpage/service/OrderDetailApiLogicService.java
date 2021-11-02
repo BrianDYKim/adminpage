@@ -3,13 +3,19 @@ package com.fastcampus.adminpage.service;
 import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.OrderDetail;
 import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.model.network.Pagination;
 import com.fastcampus.adminpage.model.network.request.OrderDetailApiRequest;
 import com.fastcampus.adminpage.model.network.response.OrderDetailApiResponse;
 import com.fastcampus.adminpage.repository.ItemRepository;
 import com.fastcampus.adminpage.repository.OrderDetailRepository;
 import com.fastcampus.adminpage.repository.OrderGroupRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,6 +101,27 @@ public class OrderDetailApiLogicService implements CrudInterface<OrderDetailApiR
                 .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
+    @Override
+    public Header<List<OrderDetailApiResponse>> search(Pageable pageable) {
+        // 페이지 가져오기
+        Page<OrderDetail> orderDetails = orderDetailRepository.findAll(pageable);
+
+        // response list 구성
+        List<OrderDetailApiResponse> orderDetailApiResponseList = orderDetails.stream()
+                .map(orderDetail -> responseData(orderDetail))
+                .collect(Collectors.toList());
+
+        // 페이지 정보 구성
+        Pagination pagination = Pagination.builder()
+                .totalPages(orderDetails.getTotalPages())
+                .totalElements(orderDetails.getTotalElements())
+                .currentPage(orderDetails.getNumber())
+                .currentElements(orderDetails.getNumberOfElements())
+                .build();
+
+        return Header.OK(orderDetailApiResponseList, pagination);
+    }
+
     private Header<OrderDetailApiResponse> response(OrderDetail orderDetail) {
         OrderDetailApiResponse body = OrderDetailApiResponse.builder()
                 .id(orderDetail.getId())
@@ -107,5 +134,19 @@ public class OrderDetailApiLogicService implements CrudInterface<OrderDetailApiR
                 .build();
 
         return Header.OK(body);
+    }
+
+    private OrderDetailApiResponse responseData(OrderDetail orderDetail) {
+        OrderDetailApiResponse body = OrderDetailApiResponse.builder()
+                .id(orderDetail.getId())
+                .status(orderDetail.getStatus())
+                .arrivalDate(orderDetail.getArrivalDate())
+                .quantity(orderDetail.getQuantity())
+                .totalPrice(orderDetail.getTotalPrice())
+                .orderGroupId(orderDetail.getOrderGroup().getId())
+                .itemId(orderDetail.getItem().getId())
+                .build();
+
+        return body;
     }
 }

@@ -28,6 +28,9 @@ public class Header<T> {
     // data 부분 (data는 보통 제네릭으로 구현함.)
     private T data;
 
+    // Pagination
+    private Pagination pagination;
+
     // OK method with no data
     public static <T> Header<T> OK() {
         return (Header<T>) Header.builder()
@@ -44,6 +47,16 @@ public class Header<T> {
                 .resultCode("OK")
                 .description("OK")
                 .data(data)
+                .build();
+    }
+
+    public static <T> Header<T> OK(T data, Pagination pagination) {
+        return (Header<T>) Header.builder()
+                .transactionTime(LocalDateTime.now())
+                .resultCode("OK")
+                .description("OK")
+                .data(data)
+                .pagination(pagination)
                 .build();
     }
 

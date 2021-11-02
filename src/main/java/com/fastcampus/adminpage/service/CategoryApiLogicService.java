@@ -3,11 +3,17 @@ package com.fastcampus.adminpage.service;
 import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.Category;
 import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.model.network.Pagination;
 import com.fastcampus.adminpage.model.network.request.CategoryApiRequest;
 import com.fastcampus.adminpage.model.network.response.CategoryApiResponse;
 import com.fastcampus.adminpage.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,8 +85,27 @@ public class CategoryApiLogicService implements CrudInterface<CategoryApiRequest
                 .map(category -> {
                     categoryRepository.delete(category);
                     return Header.OK();
-                })
-                .orElseGet(() -> Header.ERROR("데이터 없음"));
+                }).orElseGet(() -> Header.ERROR("데이터 없음"));
+    }
+
+    @Override
+    public Header<List<CategoryApiResponse>> search(Pageable pageable) {
+        Page<Category> categories = categoryRepository.findAll(pageable);
+
+        // Response를 list로 묶기
+        List<CategoryApiResponse> categoryApiResponseList = categories.stream()
+                .map(category -> responseData(category))
+                .collect(Collectors.toList());
+
+        // 페이징 정보 처리
+        Pagination pagination = Pagination.builder()
+                .totalPages(categories.getTotalPages())
+                .totalElements(categories.getTotalElements())
+                .currentPage(categories.getNumber())
+                .currentElements(categories.getNumberOfElements())
+                .build();
+
+        return Header.OK(categoryApiResponseList, pagination);
     }
 
     private Header<CategoryApiResponse> response(Category category) {
@@ -91,5 +116,15 @@ public class CategoryApiLogicService implements CrudInterface<CategoryApiRequest
                 .build();
 
         return Header.OK(body);
+    }
+
+    private CategoryApiResponse responseData(Category category) {
+        CategoryApiResponse body = CategoryApiResponse.builder()
+                .id(category.getId())
+                .type(category.getType())
+                .title(category.getTitle())
+                .build();
+
+        return body;
     }
 }

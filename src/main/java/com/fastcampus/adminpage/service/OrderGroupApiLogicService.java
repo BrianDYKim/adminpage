@@ -3,14 +3,19 @@ package com.fastcampus.adminpage.service;
 import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.OrderGroup;
 import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.model.network.Pagination;
 import com.fastcampus.adminpage.model.network.request.OrderGroupApiRequest;
 import com.fastcampus.adminpage.model.network.response.OrderGroupApiResponse;
 import com.fastcampus.adminpage.repository.OrderGroupRepository;
 import com.fastcampus.adminpage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +93,26 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
                 .orElseGet(() -> Header.ERROR("데이터 없음"));
     }
 
+    @Override
+    public Header<List<OrderGroupApiResponse>> search(Pageable pageable) {
+        Page<OrderGroup> orderGroups = orderGroupRepository.findAll(pageable);
+
+        // Response의 List화
+        List<OrderGroupApiResponse> orderGroupApiResponseList = orderGroups.stream()
+                .map(orderGroup -> responseData(orderGroup))
+                .collect(Collectors.toList());
+
+        // 페이징 정보 패키지
+        Pagination pagination = Pagination.builder()
+                .totalPages(orderGroups.getTotalPages())
+                .totalElements(orderGroups.getTotalElements())
+                .currentPage(orderGroups.getNumber())
+                .currentElements(orderGroups.getNumberOfElements())
+                .build();
+
+        return Header.OK(orderGroupApiResponseList, pagination);
+    }
+
     private Header<OrderGroupApiResponse> response(OrderGroup orderGroup) {
         OrderGroupApiResponse body = OrderGroupApiResponse.builder()
                 .id(orderGroup.getId())
@@ -104,5 +129,23 @@ public class OrderGroupApiLogicService implements CrudInterface<OrderGroupApiReq
                 .build();
 
         return Header.OK(body);
+    }
+
+    private OrderGroupApiResponse responseData(OrderGroup orderGroup) {
+        OrderGroupApiResponse body = OrderGroupApiResponse.builder()
+                .id(orderGroup.getId())
+                .status(orderGroup.getStatus())
+                .orderType(orderGroup.getOrderType())
+                .revAddress(orderGroup.getRevAddress())
+                .revName(orderGroup.getRevName())
+                .paymentType(orderGroup.getPaymentType())
+                .totalPrice(orderGroup.getTotalPrice())
+                .totalQuantity(orderGroup.getTotalQuantity())
+                .orderAt(orderGroup.getOrderAt())
+                .arrivalDate(orderGroup.getArrivalDate())
+                .userId(orderGroup.getUser().getId())
+                .build();
+
+        return body;
     }
 }

@@ -3,13 +3,18 @@ package com.fastcampus.adminpage.service;
 import com.fastcampus.adminpage.ifs.CrudInterface;
 import com.fastcampus.adminpage.model.entity.AdminUser;
 import com.fastcampus.adminpage.model.network.Header;
+import com.fastcampus.adminpage.model.network.Pagination;
 import com.fastcampus.adminpage.model.network.request.AdminUserApiRequest;
 import com.fastcampus.adminpage.model.network.response.AdminUserApiResponse;
 import com.fastcampus.adminpage.repository.AdminUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,8 +94,25 @@ public class AdminUserApiLogicService implements CrudInterface<AdminUserApiReque
                 .map(adminUser -> {
                     adminUserRepository.delete(adminUser);
                     return Header.OK();
-                })
-                .orElseGet(() -> Header.ERROR("데이터 없음"));
+                }).orElseGet(() -> Header.ERROR("데이터 없음"));
+    }
+
+    @Override
+    public Header<List<AdminUserApiResponse>> search(Pageable pageable) {
+        Page<AdminUser> adminUsers = adminUserRepository.findAll(pageable);
+
+        List<AdminUserApiResponse> adminUserApiResponseList = adminUsers.stream()
+                .map(adminUser -> responseData(adminUser))
+                .collect(Collectors.toList());
+
+        Pagination pagination = Pagination.builder()
+                .totalPages(adminUsers.getTotalPages())
+                .totalElements(adminUsers.getTotalElements())
+                .currentPage(adminUsers.getNumber())
+                .currentElements(adminUsers.getNumberOfElements())
+                .build();
+
+        return Header.OK(adminUserApiResponseList, pagination);
     }
 
     private Header<AdminUserApiResponse> response(AdminUser adminUser) {
@@ -108,5 +130,22 @@ public class AdminUserApiLogicService implements CrudInterface<AdminUserApiReque
                 .build();
 
         return Header.OK(body);
+    }
+
+    private AdminUserApiResponse responseData(AdminUser adminUser) {
+        AdminUserApiResponse body = AdminUserApiResponse.builder()
+                .id(adminUser.getId())
+                .account(adminUser.getAccount())
+                .password(adminUser.getPassword())
+                .status(adminUser.getStatus())
+                .role(adminUser.getRole())
+                .lastLoginedAt(adminUser.getLastLoginedAt())
+                .passwordUpdatedAt(adminUser.getPasswordUpdatedAt())
+                .loginFailCount(adminUser.getLoginFailCount())
+                .registeredAt(adminUser.getRegisteredAt())
+                .unregisteredAt(adminUser.getUnregisteredAt())
+                .build();
+
+        return body;
     }
 }
