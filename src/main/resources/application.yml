@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/study?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: root
+    url: jdbc:mysql://adminpage-practice.c4e8qukc2vf7.ap-northeast-2.rds.amazonaws.com/study?serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
+    password: bluedragon15!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -10,3 +10,6 @@ spring:
 
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+server:
+  port: 5000
